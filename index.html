@@ -149,6 +149,13 @@
                 const prevSection = sections[currentSection];
                 const nextSection = sections[index];
 
+                if (index !== 0) {
+                    nextSection.style.opacity = "0";
+                    void nextSection.offsetWidth; // Force reflow
+                } else {
+                    nextSection.style.opacity = "1"; // First section is initially visible
+                }
+
                 prevSection.classList.add("fade-out");
                 nextSection.style.opacity = "1";
 
