@@ -9,7 +9,28 @@
             font-family: sans-serif;
             margin: 0;
             overflow-x: hidden;
+            overflow-y: auto; /* Enable vertical scrolling */
+            scrollbar-width: thin; /* For Firefox */
+            -webkit-overflow-scrolling: touch; /* For iOS momentum scrolling */
         }
+
+        body::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
+        }
+
+        body::-webkit-scrollbar-track {
+            background: #f1f1f1; /* Color of the tracking area */
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background: #888; /* Color of the scroll thumb */
+            border-radius: 4px; /* Rounded corners */
+        }
+
+        body::-webkit-scrollbar-thumb:hover {
+            background: #555; /* Color when hovered */
+        }
+
         a {
             color: rgb(0, 128, 255);
         }
@@ -25,6 +46,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            height: 100vh;
         }
         #section1 h2 {
             margin-bottom: 20px;
@@ -71,7 +93,7 @@
         }
         html,
         body {
-            overflow: hidden; /* Prevent default scrolling */
+            /*overflow: hidden; /* Prevent default scrolling */
             height: 100%; /* Ensure full viewport height */
         }
         .overlay {
@@ -86,19 +108,32 @@
             background-image: url("images/1.JPG");
             background-size: cover;
             background-position: center;
-            height: 100vh;
         }
         #section2 {
             background-image: url("images/3.JPG");
             background-size: cover;
             background-position: center;
-            height: 100vh;
         }
         #section3 {
             background-image: url("images/Jan. 2025 PC.PNG");
             background-size: cover;
             background-position: center;
-            height: 100vh;
+        }
+        nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
         }
     </style>
 </head>
@@ -138,15 +173,37 @@
         const sections = document.querySelectorAll(".section");
         const sectionWrapper = document.querySelector(".section-wrapper");
         let currentSection = 0;
-        let isScrolling = false;
-        let throttleTimer;
-        let touchStartY = null;
-        let touchEndY = null;
-        const touchThreshold = 50; // Minimum swipe distance
 
         function scrollToSection(index) {
-            if (index >= 0 && index < sections.length && index !== currentSection) {
-                const prevSection = sections[currentSection];
-                const nextSection = sections[index];
+            if (index >= 0 && index < sections.length) {
+                currentSection = index;
+                sectionWrapper.style.transform = `translateY(-${currentSection * 100}vh)`;
+            }
+        }
 
-                //
+        // Add event listeners to navigation links
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach((link, index) => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                scrollToSection(index);
+            });
+        });
+
+        // Add event listeners to anchor links within sections
+        const sectionLinks = document.querySelectorAll('.section a');
+        sectionLinks.forEach((link) => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    const index = Array.from(sections).indexOf(targetSection);
+                    scrollToSection(index);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
